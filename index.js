@@ -17,13 +17,13 @@ const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWOERD}@wal
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
-async function run(){
-  try{
+async function run() {
+  try {
     await client.connect();
     const productCollection = client.db("walton-product").collection("product")
 
     // product data read to mongodb 
-    app.get('/product' , async (req , res) =>{
+    app.get('/product', async (req, res) => {
       const query = {}
       const cursor = productCollection.find(query)
       const product = await cursor.toArray()
@@ -31,16 +31,52 @@ async function run(){
     })
 
     // product details data load 
-    app.get('/product/:id' , async (req , res) =>{
+    app.get('/product/:id', async (req, res) => {
       const id = req.params.id
-      console.log(id);
-      const query = {_id : ObjectId(id)}
+
+      const query = { _id: ObjectId(id) }
       const result = await productCollection.findOne(query)
-      res.send(result) 
+      res.send(result)
+    })
+
+    // update Quentity to incase
+    app.put('/product/:id', async (req, res) => {
+      const id = req.params
+      console.log(id);
+      const body = req.body
+      console.log(body);
+      const filter = { _id: ObjectId(id) }
+      const options = { upsert: true };
+      const update = {
+        $set: {
+          quentity: body.newQuentity
+
+        }
+      }
+      const result = await productCollection.updateOne(filter, update, options);
+      res.send({ success: 'Your Deliver SuccessFul' })
+    })
+
+    // update quentity to added 
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params
+      console.log(id);
+      const body = req.body
+      console.log(body);
+      const filter = { _id: ObjectId(id) }
+      const options = { upsert: true };
+      const update = {
+        $set: {
+          quentity: body.newQuentity
+
+        }
+      }
+      const result = await productCollection.updateOne(filter, update, options);
+      res.send({ success: 'Thank You , Quentity added' })
     })
 
   }
-  finally{
+  finally {
 
   }
 }
