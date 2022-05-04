@@ -39,7 +39,7 @@ async function run() {
       res.send(result)
     })
 
-    // update Quentity to incase
+    // update Quentity to incrase
     app.put('/product/:id', async (req, res) => {
       const id = req.params
       console.log(id);
@@ -73,6 +73,14 @@ async function run() {
       }
       const result = await productCollection.updateOne(filter, update, options);
       res.send({ success: 'Thank You , Quentity added' })
+    })
+
+    // post product 
+
+    app.post('/product' , async(req , res) =>{
+      const product = req.pody
+      const result = await productCollection.insertOne(product)
+      res.send({success: 'Product Added SuccessFul'})
     })
 
   }
