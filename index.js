@@ -23,6 +23,7 @@ async function run() {
     const productCollection = client.db("walton-product").collection("product")
 
     // product data read to mongodb 
+  
     app.get('/product', async (req, res) => {
       const query = {}
       const cursor = productCollection.find(query)
@@ -42,10 +43,10 @@ async function run() {
     // update Quentity to incrase
     app.put('/product/:id', async (req, res) => {
       const id = req.params
-      console.log(id);
+     
       const body = req.body
       console.log(body);
-      const filter = { _id: ObjectId(id) }
+      const filter = {_id: ObjectId(id) }
       const options = { upsert: true };
       const update = {
         $set: {
@@ -60,10 +61,10 @@ async function run() {
     // update quentity to added 
     app.put('/products/:id', async (req, res) => {
       const id = req.params
-      console.log(id);
+   
       const body = req.body
       console.log(body);
-      const filter = { _id: ObjectId(id) }
+      const filter = {_id: ObjectId(id) }
       const options = { upsert: true };
       const update = {
         $set: {
@@ -76,12 +77,14 @@ async function run() {
     })
 
     // post product 
-
-    app.post('/product' , async(req , res) =>{
-      const product = req.pody
-      const result = await productCollection.insertOne(product)
+    app.post('/product', async (req , res) =>{
+      const order = req.body
+      console.log(order);
+      const result = await productCollection.insertOne(order)
       res.send({success: 'Product Added SuccessFul'})
     })
+
+   
 
   }
   finally {
