@@ -77,12 +77,22 @@ async function run() {
     })
 
     // post product 
-    app.post('/product', async (req , res) =>{
+    app.post('/productOrder', async (req , res) =>{
       const order = req.body
       console.log(order);
       const result = await productCollection.insertOne(order)
       res.send({success: 'Product Added SuccessFul'})
     })
+
+    // my postet prduct read 
+    app.get('/productOrder', async (req, res) => {
+      const email = req.query.email
+      const query = {email: email}
+      const cursor = productCollection.find(query)
+      const product = await cursor.toArray()
+      res.send(product)
+    })
+
 
    
 
