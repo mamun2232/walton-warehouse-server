@@ -3,6 +3,7 @@ const app = express()
 const port = process.env.PORT || 5000
 const cors = require('cors')
 require('dotenv').config()
+var jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middale ware 
@@ -79,9 +80,19 @@ async function run() {
     // post product 
     app.post('/productOrder', async (req , res) =>{
       const order = req.body
-      console.log(order);
-      const result = await productCollection.insertOne(order)
+      const tokenInfo = req.headers.authorization
+      const [email, accussToken] = tokenInfo.split(" ")
+      const decoded = verifay(accussToken)
+
+      if(email == decoded.email){
+        const result = await productCollection.insertOne(order)
       res.send({success: 'Product Added SuccessFul'})
+        
+      }
+      else {
+        res.send({ success: 'Unauthrize Access' })
+      }
+      
     })
 
     // my postet prduct read 
@@ -92,6 +103,34 @@ async function run() {
       const product = await cursor.toArray()
       res.send(product)
     })
+
+    // crate jwt tocken 
+    app.post('/login' , async (req , res)=>{
+      const email = req.body
+      console.log(email);
+      const  accessToken = jwt.sign(email , process.env.ACCESS_TOKEN);
+      res.send({accessToken})
+
+
+    })
+
+    // verifay email 
+    const verifay = (token) => {
+      let email;
+      jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+        if (err) {
+          email = 'Unvalid Email'
+
+        }
+        if (decoded) {
+          console.log(email);
+          email = decoded
+        }
+      });
+      return email
+
+    }
+
 
 
    
