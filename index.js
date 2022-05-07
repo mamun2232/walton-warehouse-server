@@ -22,6 +22,7 @@ async function run() {
   try {
     await client.connect();
     const productCollection = client.db("walton-product").collection("product")
+    const reviewCollection = client.db("customer").collection("review")
 
     // product data read to mongodb 
   
@@ -130,6 +131,23 @@ async function run() {
       return email
 
     }
+
+    //  detet api 
+    app.delete('/product/:id' , async (req , res) =>{
+      const id = req.params.id
+      const query = {_id : ObjectId(id)}
+      const confrom = await productCollection.deleteOne(query)
+      res.send(confrom)
+    })
+
+
+    // customer review data read 
+    app.get('/customerReview', async (req, res) => {
+      const query = {}
+      const cursor = reviewCollection.find(query)
+      const review = await cursor.toArray()
+      res.send(review)
+    })
 
 
 
